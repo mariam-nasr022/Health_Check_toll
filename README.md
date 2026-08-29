@@ -1,192 +1,168 @@
-System Health & Performance Monitor
+# 🖥️ System Health & Performance Monitor
 
-A comprehensive Bash script for monitoring Linux system health and performance.
-The script collects important system information, performs health checks, detects warnings, and saves detailed reports into log files.
+A Bash-based Linux tool that checks system performance, services, networking, system logs, and basic security.
 
----
+## 📌 Overview
 
-Features
+The script provides a quick health check of a Linux system and saves the results to a log file.
 
-System Information
+It checks:
 
-- System uptime
-- Last boot time
+* CPU and memory usage
+* Disk space and I/O
+* System uptime
+* Services status
+* Network connectivity and DNS
+* System and hardware errors
+* Failed services and login attempts
+* Sudo users and pending updates
 
-CPU Monitoring
+## ✨ Features
 
-- Current CPU usage percentage
-- Top CPU-consuming processes
-- CPU threshold alerts
+### 📊 System Monitoring
 
-Memory Monitoring
+* CPU and memory usage
+* Top resource-consuming processes
+* Disk usage and I/O
+* System uptime and boot time
 
-- Current memory usage percentage
-- Top memory-consuming processes
-- Memory threshold alerts
+### ⚙️ Services
 
-Disk Monitoring
+Checks the status of important services such as:
 
-- Disk space usage
-- Disk threshold alerts
-- Disk I/O statistics
+```text
+sshd
+cron
+apache2
+mariadb
+ufw
+docker
+```
 
-Services Check
+The script reports whether each service is **active** and **enabled**.
 
-Checks important services such as:
+### 🌐 Network & Security
 
-- SSH ("sshd")
-- Cron ("cron")
-- Apache ("apache2")
-- MariaDB ("mariadb")
-- UFW Firewall ("ufw")
-- Docker ("docker")
+* Network interfaces and gateway
+* Internet connectivity and packet loss
+* DNS and listening ports
+* System and hardware errors
+* Failed logins and services
+* Sudo users and pending updates
 
-Shows:
+## ⚙️ How It Works
 
-- Active status
-- Enabled status
+1. Checks required commands and root privileges.
+2. Initializes logging.
+3. Collects performance information.
+4. Checks services and network status.
+5. Scans system logs and security information.
+6. Removes old monitoring logs.
 
-Network Check
-
-- Network interfaces
-- Default gateway
-- Internet connectivity test
-- Packet loss detection
-- DNS resolution test
-- Listening ports
-- Network traffic statistics
-
-System Logs Analysis
-
-Detects:
-
-- Boot errors
-- OOM (Out Of Memory) kills
-- Disk warnings
-- Hardware errors
-- Driver issues
-- Failed services
-
-Security Check
-
-- Failed login attempts
-- Users with sudo privileges
-- Pending package updates
-
-Logging
-
-- Automatically creates log files
-- Stores reports in:
-
-/var/log/monitor/
-
-- Automatic cleanup of old logs
-
----
-
-Requirements
-
-Install the following packages before running the script:
-
-Ubuntu / Debian
-
-sudo apt update
-
-sudo apt install sysstat bc dnsutils iproute2 iputils-ping \
-net-tools util-linux systemd
-
----
-
-Script Variables
-
-Variable| Description
-"THRESHOLD_CPU"| CPU warning threshold
-"THRESHOLD_MEM"| Memory warning threshold
-"THRESHOLD_DISK"| Disk usage threshold
-"THRESHOLD_PACKET_LOSS"| Network packet loss threshold
-"Log_Retention_Days"| Number of days to keep logs
-"TOP_N"| Number of top processes displayed
-
----
-
-Installation
-
-Clone the repository:
-
-git clone https://github.com/mariam-nasr022/system-health-monitor.git
-
-Move into the directory:
-
-cd system-health-monitor
+## 🚀 Usage
 
 Make the script executable:
 
+```bash
 chmod +x monitor.sh
+```
 
----
+Run the system health check:
 
-Usage
-
-Run the script:
-
+```bash
 sudo ./monitor.sh
+```
 
-Display help:
+Display the help message:
 
+```bash
 ./monitor.sh -h
+```
 
----
+> **Note:** The script must be run with root privileges because some system information and logs require administrative access.
 
-Example Output
+## 📁 Logging
 
-====================================
-             CPU Usage
-====================================
+Each execution creates a timestamped log file in:
 
-CPU Usage: 15.7%
+```text
+/var/log/monitor
+```
 
-Top CPU-Consuming Processes:
-USER      PID   %CPU   COMMAND
-root      325   10.2   apache2
-mysql     512    8.4   mariadb
+The log filename follows this format:
 
----
-
-Log Files
-
-Generated reports are saved as:
-
-/var/log/monitor/health_YYYY-MM-DD_HH-MM.log
+```text
+health_YYYY-MM-DD_HH-MM.log
+```
 
 Example:
 
-/var/log/monitor/health_2026-08-29_15-30.log
+```text
+health_2026-08-29_04-30.log
+```
 
----
+The script sends both standard output and errors to the log file while also displaying them on the terminal.
 
-Error Handling
+## 🚨 Thresholds
 
-The script checks:
+The script uses configurable thresholds to detect potential problems:
 
-- Required commands availability
-- Root privileges
-- Missing dependencies
-- Invalid options
+| Check         | Threshold |
+| ------------- | --------: |
+| CPU Usage     |       80% |
+| Memory Usage  |       80% |
+| Disk Usage    |       90% |
+| Packet Loss   |       20% |
+| Log Retention |    7 days |
+| Top Processes |         6 |
 
----
+The script displays a warning when CPU, memory, disk usage, or packet loss exceeds its threshold.
 
-Future Improvements
+## 🛡️ Error Handling
 
-- Export reports to HTML
-- Email alerts
-- JSON report generation
-- Dashboard integration
-- Monitoring multiple servers
+The script checks for required commands and root privileges before running. Missing dependencies or insufficient permissions stop the script with an error message.
 
----
+## 🛠️ Technologies
 
-Author
+* Bash
+* Linux
+* `systemctl`
+* `journalctl`
+* `ps`
+* `df`
+* `free`
+* `ip`
+* `ping`
+* `iostat`
 
-Mariam Nasr
+## 📂 Project Structure
 
+```text
+Health_Check_toll/
+├── monitor.sh
+└── README.md
+```
+
+## ⚙️ Configuration
+
+The main configuration variables can be adjusted inside `monitor.sh`:
+
+```bash
+Log_Dir="/var/log/monitor"
+Log_File="${Log_Dir}/health_$(date +%Y-%m-%d_%H-%M).log"
+
+THRESHOLD_CPU=80
+THRESHOLD_MEM=80
+THRESHOLD_DISK=90
+THRESHOLD_PACKET_LOSS=20
+
+Log_Retention_Days=7
+TOP_N=6
+```
+
+## 👩‍💻 Author
+
+**Mariam Nasr**
+
+**Version:** 1.0
 
