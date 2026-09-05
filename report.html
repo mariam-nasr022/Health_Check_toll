@@ -1,0 +1,443 @@
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>System Health Report</title>
+
+            <style>
+                body {
+                    background-color: #F5F7FA;
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 30px;
+                    color: #2C3E50;
+                }
+
+                h1 {
+                    color: #2C3E50;
+                    text-align: center;
+                    margin-bottom: 30px;
+                    font-size: 32px;
+                }
+
+                .dashboard {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                    gap: 20px;
+                    align-items: start;
+                }
+
+                .card {
+                    background-color: #FFFFFF;
+                    border-radius: 12px;
+                    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+                    padding: 20px;
+                    box-sizing: border-box;
+                    overflow: hidden;
+                    border: 1px solid #E8ECF1;
+                }
+
+                .card h2 {
+                    color: #3498DB;
+                    margin-top: 0;
+                    margin-bottom: 15px;
+                    font-size: 20px;
+                    border-bottom: 2px solid #E8ECF1;
+                    padding-bottom: 10px;
+                }
+
+                .card h3 {
+                    color: #2C3E50;
+                    font-size: 15px;
+                    margin-top: 18px;
+                    margin-bottom: 8px;
+                }
+
+                .card p {
+                    font-size: 32px;
+                    font-weight: bold;
+                    margin: 10px 0 0;
+                    color: #2C3E50;
+                }
+
+                pre {
+                    background-color: #F8F9FA;
+                    padding: 12px;
+                    border-radius: 6px;
+                    overflow-x: auto;
+                    font-size: 13px;
+                    line-height: 1.5;
+                    white-space: pre-wrap;
+                    word-break: break-word;
+                }
+                
+                .overall-card {
+                    grid-column: 1 / -1;
+                    text-align: center;
+                  }
+                
+
+                .wide-card {
+                    grid-column: span 2;
+                }
+
+                .status-ok {
+                    color: #27AE60 !important;
+                    font-weight: bold;
+                }
+
+                .status-warning {
+                    color: #F39C12 !important;
+                    font-weight: bold;
+                }
+
+                .status-failed {
+                    color: #E74C3C !important;
+                    font-weight: bold;
+                }
+                
+                .status-reasons {
+                     margin-top: 10px;
+ 		     text-align: center;
+                    }
+
+.status-reasons strong {
+ 		      display: block;
+                      font-size: 18px;
+                      margin-bottom: 8px;
+                     }
+
+                 .status-reasons ul {
+                      list-style: none;
+                      padding: 0;
+                      margin: 0;
+                     }
+
+                   .status-reasons li {
+                        font-size: 16px;
+                        margin: 6px 0;
+                       }
+
+                .progress-bar {
+ 	 	   background-color: #E8ECF1;
+ 		   border-radius: 8px;
+   height: 14px;
+  		   width: 100%;
+  		   margin-top: 10px;
+           overflow: hidden;
+  }
+
+.progress-fill {
+ 		   height: 100%;
+  		   border-radius: 8px;
+   		   transition: width 0.3s ease;
+  }
+
+.fill-ok {
+      		   background-color: #27AE60;
+  }
+
+.fill-warning {
+ 		    background-color: #F39C12;
+   }
+
+                   .service-row {
+  		      display: flex;
+   		      align-items: center;
+ 		      justify-content: space-between;
+  		      padding: 8px 0;
+                      border-bottom: 1px solid #E8ECF1;
+    }
+
+   .service-row:last-child {
+ 			   border-bottom: none;
+ }
+
+   .service-name {
+  			  font-weight: bold;
+   			  font-size: 15px;
+ }
+
+   .badge {
+  		      display: inline-block;
+  		      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+   		      font-weight: bold;
+   		      margin-left: 6px;
+                     }
+
+   .badge-ok {
+  			  background-color: #D4EFDF;
+   			  color: #27AE60;
+ }
+
+   .badge-warning {
+       background-color: #FDEBD0;
+                       color: #F39C12;
+      }
+
+    .badge-failed {
+  		         background-color: #FADBD8;
+   			 color: #E74C3C;
+}
+                .log-box {
+                    border-left: 4px solid;
+                    border-radius: 6px;
+                    padding: 10px 12px;
+                    margin: 10px 0;
+                }
+
+                .log-ok {
+                    border-left-color: #27AE60;
+                    background-color: #EAFAF1;
+                }
+
+                .log-issue {
+                    border-left-color: #E74C3C;
+                    background-color: #FDEDEC;
+                }
+
+                .log-warning {
+   		    border-left-color: #F39C12;
+ 		    background-color: #FEF5E7;
+                   }
+
+                .log-box pre {
+                    background-color: transparent;
+                    padding: 0;
+                    margin: 4px 0 0;
+                }
+
+                .info-box {
+                    border-left: 4px solid #BDC3C7;
+                    border-radius: 6px;
+                    padding: 10px 12px;
+                    margin: 10px 0;
+                    background-color: #F8F9FA;
+                }
+
+                .info-box pre {
+                    background-color: transparent;
+                    padding: 0;
+                    margin: 4px 0 0;
+                }
+
+
+                .report-time {
+                    text-align: center;
+                    color: #7F8C8D;
+                    font-size: 17px;
+                    font-weight: bold;
+                    margin: -15px 0 30px 0;
+                   }
+
+                @media (max-width: 800px) {
+                  .wide-card {
+                       grid-column: span 1;
+                 }
+
+                    body {
+                        padding: 15px;
+                    }
+
+                    h1 {
+                        font-size: 26px;
+                    }
+
+                }
+
+            </style>
+        </head>
+
+        <body>
+            <h1>System Health & Performance Report</h1>
+            <p class="report-time">Generated: September 5, 2026 at 02:00 AM</p>
+           
+       <div class="card overall-card">
+           <h2>Overall System Status</h2>
+           <p id="overall-status" class="status-warning" style="font-size:36px;">WARNING</p>
+     <div class="status-reasons"><strong>Reason:</strong><ul><li>ufw service is inactive</li></ul></div>
+     </div>
+
+            <div class="dashboard">
+    <div class="card">
+        <h2>Uptime</h2>
+        <p>up 1 day, 2 hours, 17 minutes</p>
+        <strong>Last Boot:</strong>
+        <span style="font-size:16px; font-weight:normal;">2026-09-03 23:42:35</span>
+    </div>
+<div class="card">
+    <h2>CPU Usage</h2>
+    <p class="status-ok" style="font-size:32px;">0.25%</p>
+    <div class="progress-bar">
+        <div class="progress-fill fill-ok" style="width: 0.25%;"></div>
+    </div>
+    <strong>Top Processes</strong>
+    <pre>USER         PID %CPU CMD
+root       52831  2.7 /bin/bash ./monitor.sh
+root       44124  0.4 /usr/bin/containerd
+root       44267  0.1 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+root       37696  0.1 /usr/lib/systemd/systemd-udevd
+root           1  0.1 /usr/lib/systemd/systemd --system --deserialize=18</pre>
+</div>
+    <div class="card">
+        <h2>Memory Usage</h2>
+        <p class="status-ok" style="font-size:32px;">17.99%</p>
+        <div class="progress-bar">
+            <div class="progress-fill fill-ok" style="width: 17.99%;"></div>
+        </div>
+        <strong>Top Processes</strong>
+        <pre>USER         PID %MEM CMD
+mysql      43047  3.0 /usr/sbin/mariadbd
+root       44267  1.3 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+root       44124  1.0 /usr/bin/containerd
+root         197  0.8 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+root         117  0.7 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers</pre>
+    </div>
+    <div class="card">
+        <h2>Disk Usage</h2>
+        <p class="status-ok" style="font-size:32px;">1%</p>
+        <div class="progress-bar">
+            <div class="progress-fill fill-ok" style="width: 1%;"></div>
+        </div>
+        <pre>Filesystem      Size  Used Avail Use% Mounted on
+/dev/sdd       1007G  2.5G  954G   1% /</pre>
+    </div>
+        <div class="card">
+            <h2>Disk I/O</h2>
+            <pre>Device   r/s      w/s      %util
+sda      0.02     0.00     0.00    
+sdb      0.01     0.00     0.16    
+sdc      0.00     0.00     0.00    
+sdd      1.61     1.18     0.46    </pre>
+        </div>
+<div class="card"><h2>Services</h2><div class="service-row"><span class="service-name">sshd</span><span><span class="badge badge-ok">ACTIVE</span><span class="badge badge-ok">ALIAS</span></span></div><div class="service-row"><span class="service-name">cron</span><span><span class="badge badge-ok">ACTIVE</span><span class="badge badge-ok">ENABLED</span></span></div><div class="service-row"><span class="service-name">apache2</span><span><span class="badge badge-ok">ACTIVE</span><span class="badge badge-ok">ENABLED</span></span></div><div class="service-row"><span class="service-name">ufw</span><span><span class="badge badge-warning">INACTIVE</span><span class="badge badge-ok">ENABLED</span></span></div><div class="service-row"><span class="service-name">mariadb</span><span><span class="badge badge-ok">ACTIVE</span><span class="badge badge-ok">ENABLED</span></span></div><div class="service-row"><span class="service-name">docker</span><span><span class="badge badge-ok">ACTIVE</span><span class="badge badge-ok">ENABLED</span></span></div></div>
+        <div class="card wide-card">
+            <h2>Network</h2>
+
+            <h3>Internet Connectivity</h3>
+            <div class="log-box log-ok">
+                <pre>OK - Internet is reachable (0% packet loss)</pre>
+            </div>
+
+            <h3>DNS Resolution</h3>
+            <div class="log-box log-ok">
+                <pre>OK - DNS is working</pre>
+            </div>
+
+            <h3>Interfaces</h3>
+            <div class="info-box">
+                <pre>lo               UNKNOWN        127.0.0.1/8 10.255.255.254/32 ::1/128 
+eth0             UP             172.31.230.255/20 fe80::215:5dff:fe93:5e10/64 
+docker0          DOWN           172.17.0.1/16 </pre>
+            </div>
+
+            <h3>Default Gateway</h3>
+            <div class="info-box">
+                <pre>default via 172.31.224.1 dev eth0 </pre>
+            </div>
+
+            <h3>Listening Ports</h3>
+            <div class="info-box">
+                <pre>Netid State  Recv-Q Send-Q  Local Address:Port  Peer Address:PortProcess                                                                                  
+udp   UNCONN 0      0          127.0.0.54:53         0.0.0.0:*    users:(("systemd-resolve",pid=38051,fd=19))                                             
+udp   UNCONN 0      0       127.0.0.53%lo:53         0.0.0.0:*    users:(("systemd-resolve",pid=38051,fd=17))                                             
+udp   UNCONN 0      0      10.255.255.254:53         0.0.0.0:*                                                                                            
+udp   UNCONN 0      0           127.0.0.1:323        0.0.0.0:*    users:(("chronyd",pid=224,fd=4))                                                        
+udp   UNCONN 0      0           127.0.0.1:323        0.0.0.0:*                                                                                            </pre>
+            </div>
+
+            <h3>Network Traffic per Interface</h3>
+            <div class="info-box">
+                <pre>02:00:20        IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+02:00:21           lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+02:00:21         eth0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+02:00:21      docker0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00</pre>
+            </div>
+        </div>
+        <div class="card wide-card">
+            <h2>System Logs</h2>
+
+            <h3>Boot & System Errors</h3>
+            <div class="log-box log-ok">
+                <pre>No boot errors found.</pre>
+            </div>
+
+            <h3>WSL / System Errors</h3>
+            <div class="log-box log-issue">
+                <pre>Sep 04 17:35:17 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5
+Sep 04 18:06:08 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5
+Sep 04 20:04:38 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -3
+Sep 04 20:04:41 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5
+Sep 04 20:09:24 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5
+Sep 04 20:17:58 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5
+Sep 04 20:22:39 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5
+Sep 04 20:23:11 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5
+Sep 04 20:31:28 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5
+Sep 05 01:43:09 ENG-Mariam-Nasr unknown: WSL (162) ERROR: CheckConnection: getaddrinfo() failed: -5</pre>
+            </div>
+
+            <h3>OOM Kills</h3>
+            <div class="log-box log-ok">
+                <pre>No OOM kills detected.</pre>
+            </div>
+
+            <h3>Disk Warnings</h3>
+            <div class="log-box log-ok">
+                <pre>No disk warnings found.</pre>
+            </div>
+
+            <h3>Hardware & Driver Errors</h3>
+            <div class="log-box log-issue">
+                <pre>Aug 28 21:39:50 ENG-Mariam-Nasr kernel: PCI: Fatal: No config space access function found</pre>
+            </div>
+
+            <h3>Networking Issues</h3>
+            <div class="log-box log-ok">
+                <pre>No networking issues found.</pre>
+            </div>
+
+            <h3>Current Failed Services</h3>
+            <div class="log-box log-ok">
+                <pre>No failed services found.</pre>
+            </div>
+
+            <h3>Service Start Failures in Logs</h3>
+            <div class="log-box log-issue">
+                <pre>Aug 28 21:52:00 ENG-Mariam-Nasr (ubuntu-insights)[771]: ubuntu-insights-collect.service: Failed at step NAMESPACE spawning /usr/bin/ubuntu-insights: No such file or directory
+Aug 28 21:52:00 ENG-Mariam-Nasr systemd[551]: Failed to start ubuntu-insights-collect.service - "Collect platform report using Ubuntu Insights while respecting consent".
+Aug 28 21:54:56 ENG-Mariam-Nasr (ubuntu-insights)[812]: ubuntu-insights-upload.service: Failed at step NAMESPACE spawning /usr/bin/ubuntu-insights: No such file or directory
+Aug 28 21:54:56 ENG-Mariam-Nasr systemd[551]: Failed to start ubuntu-insights-upload.service - "Upload collected and matured platform reports using Ubuntu Insights while respecting consent".</pre>
+            </div>
+        </div>
+    <div class="card wide-card">
+        <h2>Security</h2>
+
+        <h3>Failed Login Attempts</h3>
+        <div class="log-box log-ok">
+            <pre>No failed login attempts found.</pre>
+        </div>
+
+        <h3>Users with sudo Privileges</h3>
+        <div class="info-box">
+            <pre>sudo:x:27:mariam</pre>
+        </div>
+
+        <h3>Pending Security Updates</h3>
+        <div class="log-box log-ok">
+            <pre>No pending security updates found.</pre>
+        </div>
+
+        <h3>Other Pending Updates</h3>
+        <div class="info-box">
+            <pre>libaudit-common/resolute-updates 1:4.1.2-1ubuntu0.1 all [upgradable from: 1:4.1.2-1build1]
+libaudit1/resolute-updates 1:4.1.2-1ubuntu0.1 amd64 [upgradable from: 1:4.1.2-1build1]
+python3-software-properties/resolute-updates 0.120.1 all [upgradable from: 0.120]
+software-properties-common/resolute-updates 0.120.1 all [upgradable from: 0.120]</pre>
+        </div>
+    </div>
+</div>
+</body>
+</html>
