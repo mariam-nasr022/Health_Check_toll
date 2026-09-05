@@ -26,6 +26,19 @@ It checks:
 * Disk usage and I/O
 * System uptime and boot time
 
+### 📄 HTML Health Report
+
+The monitoring results are also generated as an interactive HTML report.
+
+The report provides:
+
+* Overall system health status
+* **HEALTHY**, **WARNING**, and **CRITICAL** status levels
+* Reasons displayed when the system is in **WARNING** or **CRITICAL** state
+* System performance information in a clear dashboard
+* Uptime, CPU, memory, disk, network, services, logs, and security information
+
+
 ### ⚙️ Services
 
 Checks the status of important services such as:
@@ -57,7 +70,8 @@ The script reports whether each service is **active** and **enabled**.
 3. Collects performance information.
 4. Checks services and network status.
 5. Scans system logs and security information.
-6. Removes old monitoring logs.
+6. Generates an HTML health report with the overall system status.
+7. Removes old monitoring logs.
 
 ## 🚀 Usage
 
@@ -140,8 +154,10 @@ The script checks for required commands and root privileges before running. Miss
 ```text
 Health_Check_toll/
 ├── monitor.sh
+├── report.html
 └── README.md
 ```
+
 
 ## ⚙️ Configuration
 
